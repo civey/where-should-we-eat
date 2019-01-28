@@ -69,7 +69,13 @@
     <script src="https://maps.google.com/maps/api/js?key=AIzaSyCAu_S8Tj6WIkcWnpxlqeBUYvZu7idl3ek"></script>
     <script>
       const $ = document.querySelector.bind(document);
-      const RESTAURANTS = [{ name: "null" }];
+      const RESTAURANTS = [
+        { name: "Shezan" },
+        { name: "Gung koreanisches Restaurant" },
+        { name: "Spätzle Club" },
+        { name: "Sandwich Bar" },
+        { name: "Restaurant China-City" }
+      ];
 
       function pick() {
         return RESTAURANTS[
@@ -86,7 +92,7 @@
         setTimeout(function() {
           const choice = pick();
           el.textContent = choice.name;
-          el.href = `https://maps.apple.com?q=${choice.name}+Berlin+Kreuzberg`;
+          el.href = `https://maps.apple.com?q=${choice.name}+Berlin+Mitte`;
           if (timeout < 400) {
             shuffle();
           } else {
