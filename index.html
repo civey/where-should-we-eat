@@ -1,128 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Where should we eat? | Civey</title>
-  <style>
-    html {
-      font-size: 28px;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Where should we eat? | Civey</title>
+    <style>
+      html {
+        font-size: 28px;
+      }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-      max-width: 740px;
-      margin: 0 auto;
-      text-align: center;
-      color: #444;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol";
+        max-width: 740px;
+        margin: 0 auto;
+        text-align: center;
+        color: #444;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
 
-    h1 {
-      margin-top: 0;
-      font-weight: 400;
-    }
+      h1 {
+        margin-top: 0;
+        font-weight: 400;
+      }
 
-    #choice {
-      font-weight: 500;
-      font-size: 2em;
-      color: inherit;
-      text-decoration: none;
-    }
+      #choice {
+        font-weight: 500;
+        font-size: 2em;
+        color: inherit;
+        text-decoration: none;
+      }
 
-    #choice:hover {
-      color: inherit;
-      text-decoration: underline;
-    }
+      #choice:hover {
+        color: inherit;
+        text-decoration: underline;
+      }
 
-    .route {
-      opacity: 0;
-      transition: opacity 250ms;
-      color: #666;
-      font-size: 14px;
-    }
+      .route {
+        opacity: 0;
+        transition: opacity 250ms;
+        color: #666;
+        font-size: 14px;
+      }
 
-    #to {
-      margin-bottom: 2em;
-    }
+      #to {
+        margin-bottom: 2em;
+      }
 
-    #time {
-      font-size: 24px;
-    }
-  </style>
-</head>
-<body>
-  <h1>Where should we eat?</h1>
-  <a href="#" id="choice">Shuffleing...</a>
-  <div class="route">
-    <div id="to">Destination</div>
-    <span id="time">🚶 <span id="duration">Time</span></span>
-    <div>
-      <span> from </span>
-      <span id="from">Start</span>
+      #time {
+        font-size: 24px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Where should we eat?</h1>
+    <a href="#" id="choice">Shuffleing...</a>
+    <div class="route">
+      <div id="to">Destination</div>
+      <span id="time">🚶 <span id="duration">Time</span></span>
+      <div><span> from </span> <span id="from">Start</span></div>
     </div>
-  </div>
 
-  <script src="https://maps.google.com/maps/api/js?key=AIzaSyCAu_S8Tj6WIkcWnpxlqeBUYvZu7idl3ek"></script>
-  <script>
-    const $ = document.querySelector.bind(document)
-    const RESTAURANTS = [
-      { name: 'null' }
-    ]
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyCAu_S8Tj6WIkcWnpxlqeBUYvZu7idl3ek"></script>
+    <script>
+      const $ = document.querySelector.bind(document);
+      const RESTAURANTS = [{ name: "null" }];
 
-    function pick () {
-      return RESTAURANTS[Math.round(Math.random() * (RESTAURANTS.length - 1))]
-    }
+      function pick() {
+        return RESTAURANTS[
+          Math.round(Math.random() * (RESTAURANTS.length - 1))
+        ];
+      }
 
-    const el = $('#choice')
-    let i = 0
+      const el = $("#choice");
+      let i = 0;
 
-    function shuffle () {
-      i += 1
-      const timeout = 66 + (i * i)
-      setTimeout(function () {
-        const choice = pick()
-        el.textContent = choice.name
-        el.href = `https://maps.apple.com?q=${choice.name}+Berlin+Kreuzberg`
-        if (timeout < 400) {
-          shuffle()
-        } else {
-          navigate(choice.name)
-        }
-      }, timeout)
-    }
-
-    function navigate (choice) {
-      const endpoint = 'https://maps.googleapis.com/maps/api/directions/json'
-
-      navigator.geolocation.getCurrentPosition(function(position) {
-        const directionsService = new google.maps.DirectionsService()
-        const directionsRequest = {
-          origin: `${position.coords.latitude},${position.coords.longitude}`,
-          destination: `${choice} Berlin Kreuzberg`,
-          travelMode: google.maps.DirectionsTravelMode.WALKING,
-          unitSystem: google.maps.UnitSystem.METRIC
-        }
-
-        directionsService.route(directionsRequest, function (response, status) {
-          if (status == google.maps.DirectionsStatus.OK) {
-            const leg = response.routes[0].legs[0]
-            $('#from').textContent = leg.start_address.replace(', Deutschland', '')
-            $('#to').textContent = leg.end_address.replace(', Deutschland', '')
-            $('#duration').textContent = leg.duration.text
-            $('.route').style.opacity = 1
+      function shuffle() {
+        i += 1;
+        const timeout = 66 + i * i;
+        setTimeout(function() {
+          const choice = pick();
+          el.textContent = choice.name;
+          el.href = `https://maps.apple.com?q=${choice.name}+Berlin+Kreuzberg`;
+          if (timeout < 400) {
+            shuffle();
+          } else {
+            navigate(choice.name);
           }
-        })
-      }, function () {
-        console.error('geolocation disabled')
-      })
-    }
+        }, timeout);
+      }
 
-    shuffle()
-  </script>
-</body>
+      function navigate(choice) {
+        const endpoint = "https://maps.googleapis.com/maps/api/directions/json";
+
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRequest = {
+              origin: `${position.coords.latitude},${
+                position.coords.longitude
+              }`,
+              destination: `${choice} Berlin Kreuzberg`,
+              travelMode: google.maps.DirectionsTravelMode.WALKING,
+              unitSystem: google.maps.UnitSystem.METRIC
+            };
+
+            directionsService.route(directionsRequest, function(
+              response,
+              status
+            ) {
+              if (status == google.maps.DirectionsStatus.OK) {
+                const leg = response.routes[0].legs[0];
+                $("#from").textContent = leg.start_address.replace(
+                  ", Deutschland",
+                  ""
+                );
+                $("#to").textContent = leg.end_address.replace(
+                  ", Deutschland",
+                  ""
+                );
+                $("#duration").textContent = leg.duration.text;
+                $(".route").style.opacity = 1;
+              }
+            });
+          },
+          function() {
+            console.error("geolocation disabled");
+          }
+        );
+      }
+
+      shuffle();
+    </script>
+  </body>
 </html>
